@@ -33,6 +33,13 @@ This will:
 ./run.sh -p "explain this codebase"
 ```
 
+## Direct usage (without run.sh)
+
+```bash
+docker compose build
+docker compose run --rm claude
+```
+
 ## What's in the container
 
 - **Base**: node:20-bookworm
@@ -46,6 +53,7 @@ This will:
 |------|-----------|------|
 | `~/git` | `/workspace` | rw |
 | `~/.claude` | `/home/node/.claude` | rw |
+| `~/.claude.json` | `/home/node/.claude.json` | rw |
 | `~/.gitconfig` | `/home/node/.gitconfig` | ro |
 | `~/.config/gh` | `/home/node/.config/gh` | ro |
 | `~/.ssh` | `/home/node/.ssh` | ro |
@@ -55,9 +63,11 @@ This will:
 - **galaxy-mcp**: Pre-cached in image, updated on each container start, registered as MCP server
 - **galaxy-skills**: Cloned to `~/.claude/skills/galaxy` on host, `git pull` on each start
 
-## Manual build
+## Entrypoint
 
-```bash
-docker compose build
-docker compose run --rm claude
-```
+On each container start, `entrypoint.sh`:
+1. Copies SSH keys to writable dir with correct permissions
+2. Updates galaxy-mcp via uvx
+3. Pulls latest galaxy-skills (if cloned)
+4. Registers Galaxy MCP server (if not already configured)
+5. Launches `claude --dangerously-skip-permissions`
