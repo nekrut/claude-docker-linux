@@ -1,0 +1,13 @@
+services:
+  claude:
+    build: .
+    stdin_open: true
+    tty: true
+    env_file: .env
+    volumes:
+      - ~/git:/workspace:rw
+      - ~/.claude:/home/node/.claude:rw
+      - ~/.gitconfig:/home/node/.gitconfig:ro
+      - ~/.config/gh:/home/node/.config/gh:ro
+      - ~/.ssh:/home/node/.ssh:ro
+    network_mode: bridge
