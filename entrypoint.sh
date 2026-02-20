@@ -4,7 +4,7 @@ set -e
 # Fix SSH key permissions (bind-mounted as ro, may have wrong perms)
 if [ -d "$HOME/.ssh" ]; then
     mkdir -p /tmp/.ssh
-    cp -a "$HOME/.ssh/." /tmp/.ssh/
+    cp "$HOME/.ssh/"* /tmp/.ssh/ 2>/dev/null || true
     chmod 700 /tmp/.ssh
     chmod 600 /tmp/.ssh/* 2>/dev/null || true
     chmod 644 /tmp/.ssh/*.pub 2>/dev/null || true
