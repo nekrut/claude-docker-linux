@@ -24,6 +24,21 @@ docker compose run --rm claude
 docker compose run --rm claude -p "explain this codebase"
 ```
 
+### Shell shortcut
+
+Add to `~/.bashrc`:
+
+```bash
+cdl() { docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm claude "$@"; }
+```
+
+Then `source ~/.bashrc` and use from anywhere:
+
+```bash
+cdl                          # interactive session
+cdl -p "explain this repo"   # one-shot
+```
+
 ### With Galaxy (optional)
 
 ```bash
