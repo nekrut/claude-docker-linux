@@ -27,6 +27,9 @@ RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.s
     && rm /tmp/miniconda.sh
 ENV PATH="/opt/conda/bin:$PATH"
 
+# Keep seed copy of conda (named volume mounts over /opt/conda)
+RUN cp -a /opt/conda /opt/conda.seed
+
 # Let node user use sudo (for in-container package installs)
 RUN echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/node
 

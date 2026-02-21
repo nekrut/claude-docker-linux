@@ -13,4 +13,12 @@ services:
       - ~/.gitconfig:/home/node/.gitconfig:ro
       - ~/.config/gh:/home/node/.config/gh:ro
       - ~/.ssh:/home/node/.ssh:ro
+      - pip-local:/home/node/.local
+      - conda:/opt/conda
+      - uv-cache:/home/node/.cache/uv
     network_mode: bridge
+
+volumes:
+  pip-local:
+  conda:
+  uv-cache:

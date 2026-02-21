@@ -11,6 +11,12 @@ if [ -d "$HOME/.ssh" ]; then
     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i /tmp/.ssh/id_ed25519 -i /tmp/.ssh/id_rsa 2>/dev/null"
 fi
 
+# Seed conda volume on first run (named volume starts empty)
+if [ ! -f /opt/conda/bin/conda ]; then
+    echo "Seeding conda volume from image..."
+    cp -a /opt/conda.seed/. /opt/conda/
+fi
+
 # Update galaxy-mcp (pull latest)
 echo "Updating galaxy-mcp..."
 uvx --from galaxy-mcp galaxy-mcp --help >/dev/null 2>&1 || true
