@@ -21,11 +21,15 @@ fi
 echo "Updating galaxy-mcp..."
 uvx --from galaxy-mcp galaxy-mcp --help >/dev/null 2>&1 || true
 
-# Update galaxy-skills
+# Clone or update galaxy-skills
 SKILLS_DIR="$HOME/.claude/skills/galaxy"
 if [ -d "$SKILLS_DIR/.git" ]; then
     echo "Updating galaxy-skills..."
     git -C "$SKILLS_DIR" pull --ff-only 2>/dev/null || true
+else
+    echo "Cloning galaxy-skills..."
+    mkdir -p "$HOME/.claude/skills"
+    git clone https://github.com/galaxyproject/galaxy-skills.git "$SKILLS_DIR" 2>/dev/null || true
 fi
 
 # Register Galaxy MCP server if not already configured
