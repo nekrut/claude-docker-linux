@@ -6,48 +6,47 @@ Based on [nekrut/claude-code-docker](https://github.com/nekrut/claude-code-docke
 
 ## Prerequisites
 
-- Docker CE + docker-compose-plugin
+- Docker CE + docker-compose-plugin ([install guide](https://docs.docker.com/engine/install/ubuntu/))
+- Your user in the `docker` group: `sudo usermod -aG docker $USER` (logout/login after)
 - `claude login` completed on host (creates `~/.claude/.credentials.json`)
 - GitHub CLI authenticated (`gh auth login`)
 
 ## Quick start
 
 ```bash
-# Set Galaxy credentials (optional)
+# Build
+docker compose build
+
+# Run interactive session
+docker compose run --rm claude
+
+# One-shot
+docker compose run --rm claude -p "explain this codebase"
+```
+
+### With Galaxy (optional)
+
+```bash
+# Set Galaxy credentials
 export GALAXY_URL=https://...
 export GALAXY_API_KEY=sk-...
 
-# Run
+# Use run.sh (writes .env, clones galaxy-skills, opens Sublime, runs container)
 ./run.sh
-```
-
-This will:
-1. Write `.env` from environment variables
-2. Clone galaxy-skills if not present
-3. Open Sublime Text on `~/git`
-4. Launch interactive Claude session in Docker
-
-## One-shot mode
-
-```bash
-./run.sh -p "explain this codebase"
-```
-
-## Direct usage (without run.sh)
-
-```bash
-docker compose build
-docker compose run --rm claude
 ```
 
 ## What's in the container
 
 - **Base**: node:20-bookworm
-- **Tools**: git, python3, gh, jq, curl, wget
+- **Tools**: git, python3, gh, jq, curl, wget, sudo
 - **Python**: uv, Miniconda3
 - **AI**: claude-code (latest), galaxy-mcp (via uvx)
 
+Claude runs with `--dangerously-skip-permissions` (suitable for isolated container use).
+
 ## Volumes
+
+### Bind mounts (host filesystem)
 
 | Host | Container | Mode |
 |------|-----------|------|
@@ -58,16 +57,31 @@ docker compose run --rm claude
 | `~/.config/gh` | `/home/node/.config/gh` | ro |
 | `~/.ssh` | `/home/node/.ssh` | ro |
 
-## Galaxy integration
+### Named volumes (persist across container restarts)
 
-- **galaxy-mcp**: Pre-cached in image, updated on each container start, registered as MCP server
-- **galaxy-skills**: Cloned to `~/.claude/skills/galaxy` on host, `git pull` on each start
+| Volume | Path | Purpose |
+|--------|------|---------|
+| `pip-local` | `/home/node/.local` | pip user packages |
+| `conda` | `/opt/conda` | conda environments |
+| `uv-cache` | `/home/node/.cache/uv` | uv/uvx cache |
+
+Packages installed via `pip install`, `conda install`, or `uv` persist across container restarts.
 
 ## Entrypoint
 
 On each container start, `entrypoint.sh`:
 1. Copies SSH keys to writable dir with correct permissions
-2. Updates galaxy-mcp via uvx
-3. Pulls latest galaxy-skills (if cloned)
-4. Registers Galaxy MCP server (if not already configured)
-5. Launches `claude --dangerously-skip-permissions`
+2. Seeds conda volume from image (first run only)
+3. Updates galaxy-mcp via uvx
+4. Pulls latest galaxy-skills (if cloned)
+5. Registers Galaxy MCP server (if not already configured)
+6. Launches `claude --dangerously-skip-permissions`
+
+## Galaxy integration
+
+- **galaxy-mcp**: Pre-cached in image, updated on each container start, registered as MCP server
+- **galaxy-skills**: Cloned to `~/.claude/skills/galaxy` on host, `git pull` on each start
+
+## Multiple agents
+
+Each `docker compose run --rm claude` starts a separate container. Run multiple in parallel from different terminals. All share the same `~/git` workspace — coordinate by having agents work on different repos or branches.
