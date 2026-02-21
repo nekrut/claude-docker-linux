@@ -29,13 +29,14 @@ docker compose run --rm claude -p "explain this codebase"
 Add to `~/.bashrc`:
 
 ```bash
-cdl() { subl --add ~/git 2>/dev/null &; docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm claude "$@"; }
+cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm claude "$@"; }
 ```
 
 Then `source ~/.bashrc` and use from anywhere:
 
 ```bash
-cdl                          # interactive session (opens Sublime + Claude)
+cd ~/git/myproject
+cdl                          # opens Sublime on current dir + interactive Claude
 cdl -p "explain this repo"   # one-shot
 ```
 
