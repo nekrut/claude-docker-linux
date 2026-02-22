@@ -31,7 +31,7 @@ GH_TOKEN=ghp_...
 3. Add shell shortcuts to `~/.bashrc`:
 ```bash
 cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm claude "$@"; }
-cdlg() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm --service-ports claude "$@"; }
+cdlg() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm -p 9090:9090 claude "$@"; }
 ```
 
 4. `source ~/.bashrc`
