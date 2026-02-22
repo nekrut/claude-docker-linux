@@ -17,11 +17,11 @@ Based on [nekrut/claude-code-docker](https://github.com/nekrut/claude-code-docke
 # Build
 docker compose build
 
-# Run interactive session
-docker compose run --rm claude
+# Run interactive session (--service-ports to expose port 9090 for Galaxy)
+docker compose run --rm --service-ports claude
 
 # One-shot
-docker compose run --rm claude -p "explain this codebase"
+docker compose run --rm --service-ports claude -p "explain this codebase"
 ```
 
 ### Shell shortcut
@@ -29,7 +29,7 @@ docker compose run --rm claude -p "explain this codebase"
 Add to `~/.bashrc`:
 
 ```bash
-cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm claude "$@"; }
+cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm --service-ports claude "$@"; }
 ```
 
 Then `source ~/.bashrc` and use from anywhere:
