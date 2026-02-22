@@ -16,6 +16,8 @@ services:
       - pip-local:/home/node/.local
       - conda:/opt/conda
       - uv-cache:/home/node/.cache/uv
+    ports:
+      - "9090:9090"
     network_mode: bridge
 
 volumes:
