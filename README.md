@@ -9,30 +9,33 @@ Based on [nekrut/claude-code-docker](https://github.com/nekrut/claude-code-docke
 - Docker CE + docker-compose-plugin ([install guide](https://docs.docker.com/engine/install/ubuntu/))
 - Your user in the `docker` group: `sudo usermod -aG docker $USER` (logout/login after)
 - `claude login` completed on host (creates `~/.claude/.credentials.json`)
-- GitHub CLI authenticated (`gh auth login`)
+- GitHub personal access token with `repo` scope ([create here](https://github.com/settings/tokens))
 
-## Quick start
+## Setup
 
+1. Clone and build:
 ```bash
-# Build
+git clone https://github.com/nekrut/claude-docker-linux.git ~/git/claude-docker-linux
+cd ~/git/claude-docker-linux
+cp .env.example .env
 docker compose build
-
-# Run interactive session (--service-ports to expose port 9090 for Galaxy)
-docker compose run --rm --service-ports claude
-
-# One-shot
-docker compose run --rm --service-ports claude -p "explain this codebase"
 ```
 
-### Shell shortcut
+2. Add credentials to `.env`:
+```
+GALAXY_URL=https://...
+GALAXY_API_KEY=sk-...
+GH_TOKEN=ghp_...
+```
 
-Add to `~/.bashrc`:
-
+3. Add shell shortcut to `~/.bashrc`:
 ```bash
 cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm --service-ports claude "$@"; }
 ```
 
-Then `source ~/.bashrc` and use from anywhere:
+4. `source ~/.bashrc`
+
+## Usage
 
 ```bash
 cd ~/git/myproject
@@ -40,15 +43,10 @@ cdl                          # opens Sublime on current dir + interactive Claude
 cdl -p "explain this repo"   # one-shot
 ```
 
-### With Galaxy (optional)
-
+Or without the shortcut:
 ```bash
-# Set Galaxy credentials
-export GALAXY_URL=https://...
-export GALAXY_API_KEY=sk-...
-
-# Use run.sh (writes .env, clones galaxy-skills, opens Sublime, runs container)
-./run.sh
+cd ~/git/claude-docker-linux
+docker compose run --rm --service-ports claude
 ```
 
 ## What's in the container
@@ -56,9 +54,13 @@ export GALAXY_API_KEY=sk-...
 - **Base**: node:20-bookworm
 - **Tools**: git, python3, gh, jq, curl, wget, sudo
 - **Python**: uv, Miniconda3
-- **AI**: claude-code (latest), galaxy-mcp (via uvx)
+- **AI**: claude-code (latest, auto-updated on start), galaxy-mcp (via uvx)
 
 Claude runs with `--dangerously-skip-permissions` (suitable for isolated container use).
+
+## GitHub auth
+
+The `gh` CLI inside the container uses `GH_TOKEN` from `.env`. Host-side keyring auth (default for `gh auth login`) is not accessible from the container — use a personal access token instead.
 
 ## Volumes
 
@@ -70,7 +72,8 @@ Claude runs with `--dangerously-skip-permissions` (suitable for isolated contain
 | `~/.claude` | `/home/node/.claude` | rw |
 | `~/.claude.json` | `/home/node/.claude.json` | rw |
 | `~/.gitconfig` | `/home/node/.gitconfig` | ro |
-| `~/.config/gh` | `/home/node/.config/gh` | ro |
+| `~/.config/gh/hosts.yml` | `/home/node/.config/gh/hosts.yml` | ro |
+| `~/.config/gh/config.yml` | `/home/node/.config/gh/config.yml` | ro |
 | `~/.ssh` | `/home/node/.ssh` | ro |
 
 ### Named volumes (persist across container restarts)
@@ -88,15 +91,17 @@ Packages installed via `pip install`, `conda install`, or `uv` persist across co
 On each container start, `entrypoint.sh`:
 1. Copies SSH keys to writable dir with correct permissions
 2. Seeds conda volume from image (first run only)
-3. Updates galaxy-mcp via uvx
-4. Pulls latest galaxy-skills (if cloned)
-5. Registers Galaxy MCP server (if not already configured)
-6. Launches `claude --dangerously-skip-permissions`
+3. Updates claude-code to latest version
+4. Updates galaxy-mcp via uvx
+5. Clones or pulls latest galaxy-skills
+6. Registers Galaxy MCP server (if not already configured)
+7. Launches `claude --dangerously-skip-permissions`
 
 ## Galaxy integration
 
 - **galaxy-mcp**: Pre-cached in image, updated on each container start, registered as MCP server
 - **galaxy-skills**: Cloned to `~/.claude/skills/galaxy` on host, `git pull` on each start
+- **Port 9090**: Mapped to host for Galaxy web UI access
 
 ## Multiple agents
 
