@@ -21,6 +21,10 @@ Dockerized Claude Code for Linux. Runs claude-code in isolated container with ho
 - `run.sh` — host-side launcher (writes .env, clones skills, opens editor, runs container)
 - `.env` / `.env.example` — Galaxy credentials + GH_TOKEN (gitignored)
 
+## Shell shortcuts (in ~/.bashrc)
+- `cdl` — opens Sublime on current dir + launches container. No port mapping, can run multiple in parallel.
+- `cdlg` — same but with `--service-ports` to expose port 9090 for Galaxy. Only one at a time (port conflict otherwise).
+
 ## Gotchas
 - `docker-compose.yml` `env_file` must be `required: false` — `.env` may not exist if user runs `docker compose` directly without `run.sh`
 - `cp -a` fails on ro bind mounts (tries to preserve ownership). Use plain `cp` for SSH keys.
