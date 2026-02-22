@@ -28,9 +28,10 @@ GALAXY_API_KEY=sk-...
 GH_TOKEN=ghp_...
 ```
 
-3. Add shell shortcut to `~/.bashrc`:
+3. Add shell shortcuts to `~/.bashrc`:
 ```bash
-cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm --service-ports claude "$@"; }
+cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm claude "$@"; }
+cdlg() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm --service-ports claude "$@"; }
 ```
 
 4. `source ~/.bashrc`
@@ -39,8 +40,9 @@ cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux
 
 ```bash
 cd ~/git/myproject
-cdl                          # opens Sublime on current dir + interactive Claude
+cdl                          # opens Sublime + interactive Claude (can run multiple)
 cdl -p "explain this repo"   # one-shot
+cdlg                         # with Galaxy port 9090 mapped (only one at a time)
 ```
 
 Or without the shortcut:
