@@ -17,6 +17,10 @@ if [ ! -f /opt/conda/bin/conda ]; then
     cp -a /opt/conda.seed/. /opt/conda/
 fi
 
+# Update claude-code
+echo "Updating claude-code..."
+sudo npm install -g @anthropic-ai/claude-code@latest 2>/dev/null || true
+
 # Update galaxy-mcp (pull latest)
 echo "Updating galaxy-mcp..."
 uvx --from galaxy-mcp galaxy-mcp --help >/dev/null 2>&1 || true

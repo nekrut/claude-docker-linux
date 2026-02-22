@@ -33,6 +33,9 @@ RUN cp -a /opt/conda /opt/conda.seed
 # Let node user use sudo (for in-container package installs)
 RUN echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/node
 
+# Create dirs for bind-mounted config files
+RUN mkdir -p /home/node/.config/gh /home/node/.ssh && chown -R node:node /home/node/.config /home/node/.ssh
+
 # Switch to node user
 USER node
 WORKDIR /workspace

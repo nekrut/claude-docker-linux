@@ -11,7 +11,8 @@ services:
       - ~/.claude:/home/node/.claude:rw
       - ~/.claude.json:/home/node/.claude.json:rw
       - ~/.gitconfig:/home/node/.gitconfig:ro
-      - ~/.config/gh:/home/node/.config/gh:ro
+      - ~/.config/gh/hosts.yml:/home/node/.config/gh/hosts.yml:ro
+      - ~/.config/gh/config.yml:/home/node/.config/gh/config.yml:ro
       - ~/.ssh:/home/node/.ssh:ro
       - pip-local:/home/node/.local
       - conda:/opt/conda
