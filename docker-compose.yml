@@ -18,6 +18,13 @@ services:
       - conda:/opt/conda
       - uv-cache:/home/node/.cache/uv
     network_mode: bridge
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 
 volumes:
   pip-local:

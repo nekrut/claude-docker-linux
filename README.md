@@ -10,6 +10,15 @@ Based on [nekrut/claude-code-docker](https://github.com/nekrut/claude-code-docke
 - Your user in the `docker` group: `sudo usermod -aG docker $USER` (logout/login after)
 - `claude login` completed on host (creates `~/.claude/.credentials.json`)
 - GitHub personal access token with `repo` scope ([create here](https://github.com/settings/tokens))
+- **GPU (optional)**: NVIDIA GPU + [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
+  ```bash
+  curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+  curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+  sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+  sudo nvidia-ctk runtime configure --runtime=docker
+  sudo systemctl restart docker
+  ```
+  Verify with: `docker compose run --rm --entrypoint bash claude -c "nvidia-smi"`
 
 ## Setup
 

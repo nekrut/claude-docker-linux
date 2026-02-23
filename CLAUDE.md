@@ -32,3 +32,4 @@ Dockerized Claude Code for Linux. Runs claude-code in isolated container with ho
 - After changing Dockerfile or entrypoint.sh, must `docker compose build` — entrypoint is COPYed into image.
 - `docker compose run` does NOT map ports by default — must use `--service-ports` flag for Galaxy port 9090.
 - gh config directory mount shows empty inside container. Mount individual files instead.
+- **GPU**: nvidia-container-toolkit required on host. compose `deploy.resources.reservations` passes all GPUs. If no NVIDIA GPU, container still starts fine (deploy section is a soft reservation).
