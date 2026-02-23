@@ -43,7 +43,7 @@ cdl() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux
 cdlg() { subl --new-window "$(pwd)" & docker compose -f ~/git/claude-docker-linux/docker-compose.yml run --rm -p 9090:9090 claude "$@"; }
 ```
 
-4. `source ~/.bashrc`
+4. `source ~/.bashrc` (required after adding shortcuts, or open a new terminal)
 
 ## Usage
 
