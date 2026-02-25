@@ -17,6 +17,8 @@ services:
       - pip-local:/home/node/.local
       - conda:/opt/conda
       - uv-cache:/home/node/.cache/uv
+    environment:
+      - CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
     network_mode: bridge
     deploy:
       resources:
